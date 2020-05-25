@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bw.mapper.HeroMapper">
+	<!-- 根据编号查询 -->
+	<select id="queryHeroById" resultType="com.bw.bean.Hero" parameterType="int">
+	select * from (SELECT
+		h.*, c.cname
+		FROM
+		tb_heros AS h
+		JOIN tb_camp AS c ON h.cid = c.cid)a
+		 where hid=#{hid}
+	</select>
+	<select id="queryAll" parameterType="map" resultType="com.bw.bean.Hero">
+		select * from (SELECT
+		h.*, c.cname
+		FROM
+		tb_heros AS h
+		JOIN tb_camp AS c ON h.cid = c.cid)a
+		<where>
+			<if test="cid!=null">
+			cid=#{cid}
+			</if>
+			<if test="status!=null ">
+			and status=#{status}
+			</if>
+			<if test="max!=null and min!=null and max>min">
+			and price&lt;=#{max} and price>=#{min}
+			</if>
+		</where>
+	</select>
+	<select id="queryAllCamp" resultType="com.bw.bean.Camp">
+	select * from tb_camp
+	</select>
+	<!-- 添加 -->
+	<insert id="insertHero" parameterType="com.bw.bean.Hero">
+	insert into tb_heros(hname,price,cid,status,picurl,uptime)
+	 values(#{hname},#{price},#{cid},#{status},#{picurl},now())
+	</insert>
+	<update id="updateHero" parameterType="int">
+	<!-- 单个参数可以使用0来获取 -->
+		update tb_heros set status=1 where hid=#{hid}
+	</update>
+</mapper>
